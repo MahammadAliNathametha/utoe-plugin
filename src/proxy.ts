@@ -74,7 +74,7 @@ export async function createHonoApp(config: UTOEConfig) {
   app.get('/health', (c: any) => {
     return c.json({
       status: 'ok',
-      version: '1.3.0',
+      version: '1.4.0',
       mode: config.mode || 'bridge',
       server: 'hono',
       providers: {

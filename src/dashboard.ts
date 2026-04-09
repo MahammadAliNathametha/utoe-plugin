@@ -103,7 +103,7 @@ export function buildDashboardHTML(
 <body>
   <h1>⚡ UTOE Dashboard</h1>
   <div class="meta">
-    <span>Universal Token Optimization Engine v1.3.0</span>
+    <span>Universal Token Optimization Engine v1.4.0</span>
     <span class="badge">${mode}</span>
     <span>Port ${port}</span>
     <span id="uptime">Uptime: —</span>

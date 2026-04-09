@@ -6,6 +6,31 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [1.4.0] — 2026-04-09
+
+### Added — Stable system prompt + Jaccard history deduplication
+
+**Stable system prompt (10–20× token saving via Anthropic prompt cache)**
+- `stabilizeSystemPrompt()` strips volatile content before forwarding:
+  - ISO timestamps / dates → `[TIMESTAMP]` / `[DATE]`
+  - UUIDs and session IDs → `[UUID]` / `[SESSION]`
+  - "Today is Wednesday April 9 2026" style injections → `today is [DATE]`
+- Per-session cache: once a stable version is set, ALL subsequent turns
+  reuse the exact same string — preventing cache busts even from minor rewording
+- `buildCachedSystem()` wraps the system block with
+  `cache_control: {type:"ephemeral"}` so Anthropic knows to cache it
+- `anthropic-beta: prompt-caching-2024-07-31` header injected automatically
+
+**Jaccard near-duplicate history dropping**
+- `compressMessages()` now scores each user turn against all prior user turns
+  using Jaccard similarity on key terms (stop-word filtered)
+- Threshold: 0.45 — catches rephrased duplicates, never drops genuinely new questions
+- Duplicate turns replaced with a 1-line reference (`[UTOE: near-duplicate of turn N]`)
+- Tested: 2 out of 3 rephrased `useState` questions correctly replaced;
+  `useEffect` and `webpack` questions correctly pass through unchanged
+
+---
+
 ## [1.3.0] — 2026-04-09
 
 ### Added — 17-layer micro-optimization compression engine
