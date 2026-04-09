@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Runtime / UTOE artifacts
+.utoe_telemetry.jsonl
+.utoe_memory.json
+.utoe/install-report.json
+*.tgz
+
+# Logs
+*.log
+.utoe-smoke-server.log
+
+# Environment files (contain API keys)
+.env.utoe
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db

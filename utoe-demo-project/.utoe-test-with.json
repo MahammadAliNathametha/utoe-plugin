@@ -1,0 +1,102 @@
+{
+  "mode": "with-utoe",
+  "totalInputTokens": 4909,
+  "totalOutputTokens": 1533,
+  "grandTotal": 6442,
+  "estimatedCostUSD": 0.019326,
+  "totalSavedByUTOE": 3086,
+  "proxyBase": "http://localhost:8787",
+  "turns": [
+    {
+      "turn": 1,
+      "prompt": "I want to build a simple CLI Todo App in TypeScript with Nod",
+      "rawInputTokens": 115,
+      "optimizedTokens": 105,
+      "savedByProxy": 40,
+      "outputTokens": 138,
+      "effortLevel": "medium"
+    },
+    {
+      "turn": 2,
+      "prompt": "Good. Now define the TypeScript types for the Todo item and ",
+      "rawInputTokens": 290,
+      "optimizedTokens": 289,
+      "savedByProxy": 101,
+      "outputTokens": 44,
+      "effortLevel": "medium"
+    },
+    {
+      "turn": 3,
+      "prompt": "Now implement the in-memory storage layer in src/store.ts.\n ",
+      "rawInputTokens": 382,
+      "optimizedTokens": 382,
+      "savedByProxy": 133,
+      "outputTokens": 231,
+      "effortLevel": "medium"
+    },
+    {
+      "turn": 4,
+      "prompt": "Now implement the main CLI entry point in src/index.ts using",
+      "rawInputTokens": 666,
+      "optimizedTokens": 561,
+      "savedByProxy": 233,
+      "outputTokens": 242,
+      "effortLevel": "medium"
+    },
+    {
+      "turn": 5,
+      "prompt": "/compact\n\nThe 'list' command output is too plain. Improve it",
+      "rawInputTokens": 648,
+      "optimizedTokens": 647,
+      "savedByProxy": 226,
+      "outputTokens": 180,
+      "effortLevel": "medium"
+    },
+    {
+      "turn": 6,
+      "prompt": "Add proper error handling throughout:\n  - If 'done <id>' or ",
+      "rawInputTokens": 907,
+      "optimizedTokens": 856,
+      "savedByProxy": 317,
+      "outputTokens": 127,
+      "effortLevel": "medium"
+    },
+    {
+      "turn": 7,
+      "prompt": "Write unit tests for the store layer (src/store.test.ts) usi",
+      "rawInputTokens": 1112,
+      "optimizedTokens": 777,
+      "savedByProxy": 389,
+      "outputTokens": 236,
+      "effortLevel": "medium"
+    },
+    {
+      "turn": 8,
+      "prompt": "/effort low\n\nWrite a concise README.md for the todo app. Inc",
+      "rawInputTokens": 1402,
+      "optimizedTokens": 495,
+      "savedByProxy": 490,
+      "outputTokens": 112,
+      "effortLevel": "low"
+    },
+    {
+      "turn": 9,
+      "prompt": "Add an npm build script that:\n  1. Compiles TypeScript to di",
+      "rawInputTokens": 1571,
+      "optimizedTokens": 460,
+      "savedByProxy": 549,
+      "outputTokens": 106,
+      "effortLevel": "low"
+    },
+    {
+      "turn": 10,
+      "prompt": "Do a final review of the whole codebase. Check for:\n  - Any ",
+      "rawInputTokens": 1739,
+      "optimizedTokens": 337,
+      "savedByProxy": 608,
+      "outputTokens": 117,
+      "effortLevel": "low"
+    }
+  ],
+  "timestamp": "2026-04-09T09:27:39.692Z"
+}

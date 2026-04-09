@@ -1,0 +1,13 @@
+# Ignore source files and docs in the published package
+src/
+docs/
+test/
+tsconfig.json
+
+.env.example
+.env.utoe
+.utoe-smoke-server.log
+.utoe_memory.json
+.utoe_telemetry.jsonl
+scripts/
+*.tgz

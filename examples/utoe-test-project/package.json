@@ -1,0 +1,11 @@
+{
+  "name": "utoe-test-project",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "utoe": "node /home/bacancy/development/UTOE-plugin/bin/utoe.js start",
+    "utoe:verify": "node /home/bacancy/development/UTOE-plugin/bin/utoe.js verify"
+  }
+}

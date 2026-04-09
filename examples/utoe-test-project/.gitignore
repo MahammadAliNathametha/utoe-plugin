@@ -1,0 +1,6 @@
+# UTOE
+.env.utoe
+.utoe_memory.json
+.utoe_telemetry.jsonl
+.claude/utoe_savings.log
+.utoe/install-report.json

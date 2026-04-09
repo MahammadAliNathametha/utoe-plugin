@@ -1,0 +1,62 @@
+{
+  "policy_version": "v1.0.0",
+  "hard_limits": {
+    "max_input_tokens": 120000,
+    "max_output_tokens": 4096,
+    "max_total_estimated_cost_usd": 2.0,
+    "block_on_overflow": true,
+    "max_retry_attempts": 2
+  },
+  "quality": {
+    "rewrite_min_confidence": 0.85,
+    "correction_proxy_threshold": 0.25,
+    "degrade_compression_on_regression": true
+  },
+  "task_profiles": {
+    "code": {
+      "max_lossy_level": "lossless",
+      "memory_budget_tokens": 1200
+    },
+    "debug": {
+      "max_lossy_level": "lossless",
+      "memory_budget_tokens": 1600
+    },
+    "summary": {
+      "max_lossy_level": "summary",
+      "memory_budget_tokens": 800
+    },
+    "analysis": {
+      "max_lossy_level": "safe_structured",
+      "memory_budget_tokens": 1200
+    }
+  },
+  "routing": {
+    "objective_weights": {
+      "savings": 1.0,
+      "quality_penalty": 2.0,
+      "latency_penalty": 1.0,
+      "failure_penalty": 3.0
+    },
+    "confidence_threshold": 0.7,
+    "fallback_chains": {
+      "default": [
+        { "provider": "openai", "model": "gpt-4o" },
+        { "provider": "anthropic", "model": "claude-sonnet-4-6" },
+        { "provider": "groq", "model": "llama-3.3-70b-versatile" },
+        { "provider": "gemini", "model": "gemini-1.5-pro" },
+        { "provider": "ollama", "model": "llama3.2" }
+      ],
+      "summary": [
+        { "provider": "openai", "model": "gpt-4o-mini" },
+        { "provider": "anthropic", "model": "claude-haiku-4-5-20251001" },
+        { "provider": "groq", "model": "llama-3.1-8b-instant" }
+      ]
+    }
+  },
+  "memory": {
+    "persistent_enabled": true,
+    "persistent_ttl_days": 30,
+    "redact_secrets": true,
+    "pii_redaction": "strict"
+  }
+}

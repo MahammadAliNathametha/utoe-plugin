@@ -1,0 +1,123 @@
+{
+  "name": "utoe-plugin",
+  "version": "1.1.8",
+  "description": "Universal Token Optimization Engine — zero-config AI proxy that optimizes token usage. Works with any IDE, CLI, or LLM.",
+  "type": "module",
+  "bin": {
+    "utoe": "bin/utoe.js"
+  },
+  "main": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./compression": "./lib/compression.js",
+    "./router": "./lib/router.js",
+    "./memory": "./lib/memory.js",
+    "./rag": "./lib/rag.js",
+    "./command-engine": "./lib/command-engine.js",
+    "./terminal-hook": "./lib/terminal-hook.js",
+    "./local-optimizer": "./lib/local-optimizer.js",
+    "./project-bootstrap": "./lib/project-bootstrap.js",
+    "./schemas": "./lib/schemas/index.js",
+    "./executor": "./lib/executor.js",
+    "./token-guard": "./lib/token-guard.js",
+    "./proxy": "./lib/proxy.js",
+    "./pipeline": "./lib/pipeline.js",
+    "./semantic-cache": "./lib/semantic-cache.js",
+    "./monkey-patch": "./lib/monkey-patch.js",
+    "./dashboard": "./lib/dashboard.js"
+  },
+  "files": [
+    "bin/",
+    "lib/",
+    "adapters/",
+    "policy/",
+    "templates/",
+    "examples/",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    ".env.example"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "build:watch": "tsc --project tsconfig.json --watch",
+    "start": "node bin/utoe.js start",
+    "utoe": "node bin/utoe.js start",
+    "init": "node bin/utoe.js init",
+    "stop": "node bin/utoe.js stop",
+    "stats": "node bin/utoe.js stats",
+    "dashboard": "node bin/utoe.js dashboard",
+    "verify": "node bin/utoe.js verify",
+    "ask": "node bin/utoe.js ask",
+    "compress": "node bin/utoe.js compress",
+    "providers": "node bin/utoe.js providers",
+    "train": "node bin/utoe.js train-personal",
+    "test": "node test/pipeline.test.mjs && node test/compression.test.mjs && node test/router.test.mjs",
+    "check:adapter": "node adapters/conformance-harness.js",
+    "utoe:verify": "node bin/utoe.js verify",
+    "prepublishOnly": "npm run build",
+    "postinstall": "node bin/utoe.js _postinstall 2>/dev/null || true"
+  },
+  "dependencies": {
+    "hono": "^4.4.0",
+    "@hono/node-server": "^1.12.0"
+  },
+  "optionalDependencies": {
+    "better-sqlite3": "^9.4.3",
+    "@xenova/transformers": "^2.17.2",
+    "@dqbd/tiktoken": "^1.0.15",
+    "tree-sitter": "^0.21.0",
+    "tree-sitter-javascript": "^0.21.0",
+    "tree-sitter-typescript": "^0.21.0",
+    "tree-sitter-python": "^0.21.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "@types/node": "^20.12.0",
+    "@types/better-sqlite3": "^7.6.10"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "ai",
+    "token",
+    "optimizer",
+    "llm",
+    "proxy",
+    "openai",
+    "anthropic",
+    "claude",
+    "ollama",
+    "groq",
+    "compression",
+    "rag",
+    "context",
+    "cost-saving",
+    "developer-tools",
+    "cursor",
+    "windsurf",
+    "aider",
+    "chatgpt",
+    "command-engine",
+    "slash-commands",
+    "claude-code",
+    "token-savings",
+    "context-management",
+    "local-first"
+  ],
+  "author": "MahammadAliNathametha",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MahammadAliNathametha/utoe-plugin.git"
+  },
+  "homepage": "https://github.com/MahammadAliNathametha/utoe-plugin#readme",
+  "bugs": {
+    "url": "https://github.com/MahammadAliNathametha/utoe-plugin/issues"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "utoe-demo-project",
+  "version": "1.0.0",
+  "description": "Live demo: UTOE vs no-UTOE token savings on a Node.js CLI Todo App",
+  "type": "module",
+  "scripts": {
+    "install-demo": "bash install-utoe-demo.sh",
+    "start-proxy": "bash start-utoe.sh",
+    "test:without": "node test-without-utoe.js",
+    "test:with": "node test-with-utoe.js",
+    "compare": "bash run-demo-comparison.sh",
+    "tokens": "node measure-tokens.js"
+  },
+  "dependencies": {
+    "utoe-plugin": "^1.1.6"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "author": "UTOE Demo",
+  "license": "MIT"
+}

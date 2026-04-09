@@ -1,0 +1,1 @@
+{"version":3,"file":"local_optimizer.js","sourceRoot":"","sources":["../src/local_optimizer.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,aAAa,EAAE,MAAM,aAAa,CAAC;AAE5C,MAAM,OAAO,GAAG,aAAa,CAAC,MAAM,CAAC,IAAI,CAAC,GAAG,CAAC,CAAC;AAC/C,MAAM,GAAG,GAAG,OAAO,CAAC,2BAA2B,CAA+B,CAAC;AAE/E,MAAM,CAAC,MAAM,iBAAiB,GAAG,GAAG,CAAC,iBAAiB,CAAC"}
