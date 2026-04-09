@@ -172,20 +172,25 @@ export function bootstrapProjectFiles(projectRoot: string = process.cwd()): {
 }
 
 /**
- * Enforce the 60-line limit on the AI context file (claude.md, .cursorrules, etc.).
- * Trims excess lines and appends a pointer to .utoe/logs/ if needed.
+ * Enforce the 60-line recommendation on the AI context file (claude.md, .cursorrules, etc.).
+ * Never truncates — instead backs up the file and appends a one-line pointer to .utoe/logs/
+ * so the user's content is preserved and UTOE's extended context is accessible.
  */
 export function enforceClaudeMdLimit(projectRoot: string = process.cwd()): void {
   const { contextFile } = detectAITool(projectRoot);
   const contextFilePath = path.join(projectRoot, contextFile);
   if (!fs.existsSync(contextFilePath)) return;
   try {
-    const lines = fs.readFileSync(contextFilePath, 'utf8').split('\n');
+    const existing = fs.readFileSync(contextFilePath, 'utf8');
+    const lines = existing.split('\n');
     if (lines.length <= 60) return;
-    const trimmed = lines.slice(0, 57);
-    trimmed.push('');
-    trimmed.push('> See .utoe/logs/ for full details (auto-managed by UTOE)');
-    fs.writeFileSync(contextFilePath, trimmed.join('\n'));
+    const pointer = '<!-- UTOE: extended context auto-managed in .utoe/logs/ -->';
+    if (existing.includes(pointer)) return; // already done
+    // Back up original before touching
+    const backup = `${contextFilePath}.bak.${Date.now()}`;
+    fs.copyFileSync(contextFilePath, backup);
+    // Append pointer — never truncate user content
+    fs.appendFileSync(contextFilePath, '\n' + pointer + '\n');
   } catch { /* ignore */ }
 }
 
