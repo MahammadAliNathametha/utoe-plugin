@@ -1,6 +1,6 @@
 {
   "name": "utoe-plugin",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Universal Token Optimization Engine — zero-config AI proxy that optimizes token usage. Works with any IDE, CLI, or LLM.",
   "type": "module",
   "bin": {

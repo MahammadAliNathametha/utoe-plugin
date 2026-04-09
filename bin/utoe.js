@@ -24,7 +24,7 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(__dirname, '..');
-const VERSION = '1.4.0';
+const VERSION = '1.4.1';
 
 // ─── Config loader ────────────────────────────────────────────────────────────
 
@@ -157,6 +157,14 @@ async function cmdStart(config) {
 
   server.listen(config.port, () => {
     console.clear();
+    const currentBaseUrl = process.env.ANTHROPIC_BASE_URL ?? '';
+    const isRouted = currentBaseUrl.includes(`${config.port}`) || currentBaseUrl.includes('localhost');
+    const envStatus = isRouted
+      ? `${C.green}✓${C.reset} ${C.green}ANTHROPIC_BASE_URL is set — Claude traffic routing through UTOE${C.reset}`
+      : `${C.yellow}⚠${C.reset}  ${C.yellow}ANTHROPIC_BASE_URL not set in this shell.${C.reset}
+  Run: ${C.cyan}export ANTHROPIC_BASE_URL=http://localhost:${config.port}${C.reset}
+  Or:  ${C.cyan}source ~/.zshrc${C.reset}  ${C.dim}(if you just installed — reload your shell profile)${C.reset}
+  Then restart Claude Code so it picks up the new env var.`;
     const providers = [
       config.OPENAI_API_KEY ? `${C.green}✓${C.reset} OpenAI` : `${C.dim}✗ OpenAI${C.reset}`,
       config.ANTHROPIC_API_KEY ? `${C.green}✓${C.reset} Anthropic` : `${C.dim}✗ Anthropic${C.reset}`,
@@ -184,8 +192,11 @@ ${C.bold}Mode:${C.reset} ${modeBadge}
 ${C.bold}Providers:${C.reset}
   ${providers}
 
-${C.bold}Quick start for any tool:${C.reset}
-  ${C.dim}export OPENAI_BASE_URL=http://localhost:${config.port}/v1${C.reset}
+${C.bold}Connect Claude Code / any AI tool:${C.reset}
+  ${C.cyan}export ANTHROPIC_BASE_URL=http://localhost:${config.port}${C.reset}   ${C.dim}← Claude Code, Cursor, Windsurf${C.reset}
+  ${C.cyan}export OPENAI_BASE_URL=http://localhost:${config.port}/v1${C.reset}   ${C.dim}← OpenAI SDK tools${C.reset}
+
+${envStatus}
 
 ${C.bold}Pipeline:${C.reset} Input → Clean → Compress → Memory → Route → LLM → Learn
 ${C.dim}Press Ctrl+C to stop  •  Dashboard auto-refreshes every 5s${C.reset}
@@ -374,7 +385,67 @@ async function cmdVerify() {
   for (const check of report.checks) {
     console.log(`  ${icon(check.ok)} ${check.id}: ${check.detail}`);
   }
-  console.log(report.ok ? `\n${C.green}All checks passed.${C.reset}\n` : `\n${C.yellow}Some checks failed.${C.reset}\n`);
+
+  // ── Live connection checks ─────────────────────────────────────────────────
+  console.log(`\n${C.bold}Live checks:${C.reset}`);
+  const port = PROXY_PORT;
+  const baseUrl = `http://localhost:${port}`;
+
+  // 1. Is the proxy reachable?
+  let proxyAlive = false;
+  let healthData = null;
+  try {
+    const res = await fetch(`${baseUrl}/health`, { signal: AbortSignal.timeout(2000) });
+    healthData = await res.json();
+    proxyAlive = healthData?.status === 'ok';
+  } catch { /* not running */ }
+  console.log(`  ${icon(proxyAlive)} Proxy running on port ${port}${proxyAlive ? ` (v${healthData?.version})` : ''}`);
+
+  // 2. Is ANTHROPIC_BASE_URL pointing at UTOE?
+  const envUrl = process.env.ANTHROPIC_BASE_URL ?? '';
+  const isRouted = envUrl.includes(String(port)) || envUrl.includes('localhost');
+  console.log(`  ${icon(isRouted)} ANTHROPIC_BASE_URL=${envUrl || C.yellow + '(not set)' + C.reset}`);
+  if (!isRouted) {
+    console.log(`\n  ${C.yellow}Fix:${C.reset} Run the following, then restart Claude Code:`);
+    console.log(`       ${C.cyan}export ANTHROPIC_BASE_URL=http://localhost:${port}${C.reset}`);
+    console.log(`  Or reload your shell profile:`);
+    console.log(`       ${C.cyan}source ~/.zshrc${C.reset}   ${C.dim}(zsh)${C.reset}`);
+    console.log(`       ${C.cyan}source ~/.bashrc${C.reset}  ${C.dim}(bash)${C.reset}`);
+  }
+
+  // 3. Send a test request through /v1/messages and verify dashboard increments
+  if (proxyAlive) {
+    let testOk = false;
+    let statsBefore = 0, statsAfter = 0;
+    try {
+      const s1 = await fetch(`${baseUrl}/stats`, { signal: AbortSignal.timeout(1500) });
+      const d1 = await s1.json();
+      statsBefore = d1.pipeline?.totalRequests ?? 0;
+
+      // Minimal test: POST to /compress (no auth needed)
+      await fetch(`${baseUrl}/compress`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: 'UTOE verify test: can you please kindly help me check if the proxy is working correctly?' }),
+        signal: AbortSignal.timeout(3000),
+      });
+
+      const s2 = await fetch(`${baseUrl}/stats`, { signal: AbortSignal.timeout(1500) });
+      const d2 = await s2.json();
+      statsAfter = d2.pipeline?.totalRequests ?? 0;
+      testOk = true; // compress endpoint reached
+    } catch { /* ignore */ }
+    console.log(`  ${icon(testOk)} Proxy endpoints responding${testOk ? ` (${statsBefore} requests before this check)` : ''}`);
+
+    if (proxyAlive && !isRouted) {
+      console.log(`\n  ${C.yellow}Dashboard shows no data because Claude traffic isn't routing through UTOE yet.${C.reset}`);
+      console.log(`  The proxy is running — you just need to set the env var above.`);
+    }
+  }
+
+  console.log(report.ok && proxyAlive && isRouted
+    ? `\n${C.green}All checks passed. Dashboard at http://localhost:${port}/${C.reset}\n`
+    : `\n${C.yellow}Fix the items above, then re-run: npx utoe verify${C.reset}\n`);
   if (!report.ok) process.exit(1);
 }
 
@@ -803,13 +874,21 @@ ${C.bold}Usage:${C.reset}
   ${C.cyan}npx utoe forget [topic]${C.reset}           Clear memory
   ${C.cyan}npx utoe report${C.reset}                   Generate diagnostic report + GitHub issue URL
 
-${C.bold}Environment:${C.reset}
-  ${C.yellow}OPENAI_BASE_URL=http://localhost:8787/v1${C.reset}   → use with any OpenAI SDK
-  ${C.yellow}UTOE_PORT=8787${C.reset}                             → custom port
-  ${C.yellow}UTOE_MODE=proxy${C.reset}                            → proxy mode (calls LLMs)
-  ${C.yellow}UTOE_MODE=bridge${C.reset}                           → bridge mode (optimize only)
+${C.bold}Quick setup after install:${C.reset}
+  ${C.cyan}export ANTHROPIC_BASE_URL=http://localhost:8787${C.reset}   ${C.dim}← Claude Code, Cursor, Windsurf${C.reset}
+  ${C.cyan}export OPENAI_BASE_URL=http://localhost:8787/v1${C.reset}   ${C.dim}← OpenAI SDK tools${C.reset}
+  Then restart Claude Code / your IDE.  ${C.dim}(Run once — or add to ~/.zshrc)${C.reset}
 
-${C.bold}Compatible with:${C.reset} Cursor, Claude Code, VS Code, Windsurf, Aider, llm CLI,
+  ${C.yellow}Something not working?${C.reset}  ${C.cyan}npx utoe doctor${C.reset}   ${C.dim}← checks everything and tells you what's wrong${C.reset}
+
+${C.bold}Environment vars:${C.reset}
+  ${C.yellow}ANTHROPIC_BASE_URL=http://localhost:8787${C.reset}    → route Claude traffic through UTOE
+  ${C.yellow}OPENAI_BASE_URL=http://localhost:8787/v1${C.reset}    → route OpenAI SDK traffic
+  ${C.yellow}UTOE_PORT=8787${C.reset}                              → custom port
+  ${C.yellow}UTOE_MODE=proxy${C.reset}                             → proxy mode (calls LLMs directly)
+  ${C.yellow}UTOE_MODE=bridge${C.reset}                            → bridge mode (optimize + pass-through)
+
+${C.bold}Compatible with:${C.reset} Claude Code, Cursor, VS Code, Windsurf, Aider, llm CLI,
   any OpenAI SDK, Vercel AI SDK, LangChain, and more.
 `);
 }
@@ -852,6 +931,7 @@ switch (cmd) {
     cmdInit(args); break;
 
   case 'verify':
+  case 'doctor':   // alias — more discoverable
     cmdVerify(); break;
 
   case 'report':

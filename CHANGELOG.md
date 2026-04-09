@@ -6,6 +6,29 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [1.4.1] — 2026-04-09
+
+### Fixed — Dashboard showing no data after `npx utoe start`
+
+**Root cause:** Three independent bugs caused the dashboard to show zeros even
+when the proxy was running and Claude was actively sending requests.
+
+| # | Bug | Fix |
+|---|---|---|
+| 1 | `/v1/messages` only counted requests when `savedTokens > 0` — a fresh session with a short first prompt was invisible | Always increment `totalRequests` regardless of savings amount |
+| 2 | `npx utoe start` banner printed `OPENAI_BASE_URL` but never printed `ANTHROPIC_BASE_URL` — users didn't know what to set for Claude Code | Banner now shows both URLs with a live env-var check: green if already routed, yellow with copy-paste fix if not |
+| 3 | After `npm install -g utoe-plugin`, shell profile was patched but current terminal didn't reload — Claude Code in that terminal never saw the new env var | Banner now shows `source ~/.zshrc` reload hint when env var is missing |
+
+### Added
+- **`npx utoe doctor`** — alias for `npx utoe verify`, more discoverable name
+- `npx utoe verify` now runs **live checks** beyond file presence:
+  - Hits `/health` to confirm the proxy process is actually responding
+  - Checks `ANTHROPIC_BASE_URL` points at the proxy port
+  - Sends a test request and confirms endpoints respond
+  - Prints exact copy-paste fix commands when something is wrong
+
+---
+
 ## [1.4.0] — 2026-04-09
 
 ### Added — Stable system prompt + Jaccard history deduplication
