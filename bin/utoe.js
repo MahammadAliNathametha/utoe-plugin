@@ -888,6 +888,11 @@ switch (cmd) {
   case '_postinstall':
     cmdPostinstall(); break;
 
+  case 'version':
+  case '--version':
+  case '-v':
+    console.log(VERSION); break;
+
   case 'help':
   case '--help':
   case '-h':

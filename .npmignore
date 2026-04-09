@@ -1,10 +1,10 @@
-# Ignore source files and docs in the published package
+# Ignore source files and dev artifacts from the published package
 src/
 docs/
 test/
 tsconfig.json
 
-.env.example
+# Runtime user files — never publish these
 .env.utoe
 .utoe-smoke-server.log
 .utoe_memory.json
