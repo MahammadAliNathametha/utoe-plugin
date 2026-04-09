@@ -24,7 +24,7 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(__dirname, '..');
-const VERSION = '1.1.9';
+const VERSION = '1.2.0';
 
 // ─── Config loader ────────────────────────────────────────────────────────────
 

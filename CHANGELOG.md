@@ -6,10 +6,39 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
+## [1.2.0] — 2026-04-09
+
+### Added
+- **Rate-limit failover** (`lib/proxy.js`) — when Anthropic returns 529 (overloaded)
+  or 429 (rate limited), UTOE automatically re-routes the request to Groq →
+  Gemini → Ollama instead of failing; response returned transparently with
+  `X-UTOE-Failover` header so the caller never sees an error
+- **Tool-result compression** — `tool_result` content blocks are now compressed
+  by the 8-layer engine before forwarding to Anthropic, directly fixing the
+  50k-token-per-turn tool-call problem reported by Claude Code users
+- **Peak-hour token cap** — during Anthropic peak hours (1 pm–7 pm UTC /
+  5 am–11 am PT) UTOE automatically clamps `max_tokens` to 4096 when the caller
+  did not set one, preventing accidental runaway generation
+- **Burn-rate card** on dashboard — new "Burn Rate" card shows tokens/min; turns
+  yellow > 2k, red > 5k so you can see runaway consumption instantly
+- **Peak-hour warning banner** on dashboard — yellow alert bar during Anthropic
+  peak hours confirms that rate-limit protection is active and names the fallback
+  chain (Groq / Gemini / Ollama)
+- **`/stats` burn_rate field** — `GET /stats` now returns
+  `{ burn_rate: { tokens_per_min, peak_hour } }` for programmatic monitoring
+
+### Why this matters
+Users on Claude Pro / Max are hitting their 5-hour rolling limits in minutes
+(April 2026) due to: prompt-cache busting, 50k+ tool-call payloads, and
+Anthropic throttling during peak hours. UTOE now automatically mitigates all
+three causes without any configuration change required.
+
+---
+
 ## [1.1.9] — 2026-04-09
 
 ### Changed
-- Version bump: dependency refinements and stability improvements
+- Version bump
 
 ---
 
